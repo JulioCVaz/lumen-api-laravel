@@ -44,20 +44,46 @@ class CarsController extends Controller
     }
 
     public function store(Request $request){
-        try{
-            $car = $this->model->create($request->all());
-            return response()->json($car, Response::HTTP_CREATED);
-        }catch(QueryException $exception){
-            return response()->json(['error' => 'Erro na conexão com o banco de dados'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'name' => 'required | max:80',
+                'description' => 'required',
+                'model' => 'required | max:10 | min:2',
+                'date' =>  'required | date_format: "Y-m-d"'
+            ]
+        );
+        if($validator->fails()){
+            return response()->json($validator->errors(), Response::HTTP_BAD_REQUEST);
+        }else{
+            try{
+                $car = $this->model->create($request->all());
+                return response()->json($car, Response::HTTP_CREATED);
+            }catch(QueryException $exception){
+                return response()->json(['error' => 'Erro na conexão com o banco de dados'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
         }
     }
 
     public function update($id, Request $request){
-        try{
-            $car = $this->model->find($id)->update($request->all());
-            return response()->json($car, Response::HTTP_OK);
-        }catch(QueryException $exception){
-            return response()->json(['error' => 'Erro na conexão com o banco de dados'], Response::HTTP_INTERNAL_SERVER_ERROR);
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'name' => 'required | max:80',
+                'description' => 'required',
+                'model' => 'required | max:10 | min:2',
+                'date' =>  'required | date_format: "Y-m-d"'
+            ]
+        );
+        if($validator->fails()){
+            return response()->json($validator->errors(), Response::HTTP_BAD_REQUEST);
+        }else{
+            try{
+                $car = $this->model->find($id)->update($request->all());
+                return response()->json($car, Response::HTTP_OK);
+            }catch(QueryException $exception){
+                return response()->json(['error' => 'Erro na conexão com o banco de dados'], Response::HTTP_INTERNAL_SERVER_ERROR);
+            }
         }
     }
 
