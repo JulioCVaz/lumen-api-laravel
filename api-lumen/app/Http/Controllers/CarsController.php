@@ -17,9 +17,9 @@ class CarsController extends Controller
     }
 
     public function getAll(){
-        $cars = $this->model->all();
-
+        
         try{
+            $cars = $this->model->all();
             if(count($cars) > 0){
                 return response()->json($cars, Response::HTTP_OK);
             }else{
@@ -31,9 +31,9 @@ class CarsController extends Controller
     }
 
     public function get($id){
-        $car = $this->model->find($id);
         try{
-            if(count($car) > 0){
+            $car = $this->model->find($id);
+            if(isset($car)){
                 return response()->json($car, Response::HTTP_OK);
             }else{
                 return response()->json(null, Response::HTTP_OK);
@@ -44,8 +44,8 @@ class CarsController extends Controller
     }
 
     public function store(Request $request){
-        $car = $this->model->create($request->all());
         try{
+            $car = $this->model->create($request->all());
             return response()->json($car, Response::HTTP_CREATED);
         }catch(QueryException $exception){
             return response()->json(['error' => 'Erro na conexão com o banco de dados'], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -53,8 +53,8 @@ class CarsController extends Controller
     }
 
     public function update($id, Request $request){
-        $car = $this->model->find($id)->update($request->all());
         try{
+            $car = $this->model->find($id)->update($request->all());
             return response()->json($car, Response::HTTP_OK);
         }catch(QueryException $exception){
             return response()->json(['error' => 'Erro na conexão com o banco de dados'], Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -62,8 +62,8 @@ class CarsController extends Controller
     }
 
     public function destroy($id){
-        $car = $this->model->find($id)->delete();
         try{
+            $car = $this->model->find($id)->delete();
             return response()->json(null, Response::HTTP_OK);
         }catch(QueryException $exception){
             return response()->json(['error' => 'Erro na conexão com o banco de dados'], Response::HTTP_INTERNAL_SERVER_ERROR);
