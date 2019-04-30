@@ -2,88 +2,36 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\CarService;
 use Illuminate\Http\Request;
-use App\Models\Cars;
-use Symfony\Component\HttpFoundation\Response;
-use App\Models\ValidationCar;
 
 class CarsController extends Controller
 {
-    private $model;
+    private $carService;
     /**
      * @return void
      */
-    public function __construct(Cars $cars){
-        $this->model = $cars;
+    public function __construct(CarService $carService){
+        $this->carService = $carService;
     }
 
     public function getAll(){
-        
-        try{
-            $cars = $this->model->all();
-            if(count($cars) > 0){
-                return response()->json($cars, Response::HTTP_OK);
-            }else{
-                return response()->json([], Response::HTTP_OK);
-            }
-        }catch(QueryException $exception){
-            return response()->json(['error' => 'Erro na conexão com o banco de dados'], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return $this->carService->getAll();
     }
 
     public function get($id){
-        try{
-            $car = $this->model->find($id);
-            if(isset($car)){
-                return response()->json($car, Response::HTTP_OK);
-            }else{
-                return response()->json(null, Response::HTTP_OK);
-            }
-        }catch(QueryException $exception){
-            return response()->json(['error' => 'Erro na conexão com o banco de dados'], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return $this->carService->get($id);
     }
 
     public function store(Request $request){
-        $validator = Validator::make(
-            $request->all(),
-            ValidationCar::RULE_CAR
-        );
-        if($validator->fails()){
-            return response()->json($validator->errors(), Response::HTTP_BAD_REQUEST);
-        }else{
-            try{
-                $car = $this->model->create($request->all());
-                return response()->json($car, Response::HTTP_CREATED);
-            }catch(QueryException $exception){
-                return response()->json(['error' => 'Erro na conexão com o banco de dados'], Response::HTTP_INTERNAL_SERVER_ERROR);
-            }
-        }
+        return $this->carService->store($request);
     }
 
     public function update($id, Request $request){
-        $validator = Validator::make(
-            $request->all(),
-            ValidationCar::RULE_CAR
-        );
-        if($validator->fails()){
-            return response()->json($validator->errors(), Response::HTTP_BAD_REQUEST);
-        }else{
-            try{
-                $car = $this->model->find($id)->update($request->all());
-                return response()->json($car, Response::HTTP_OK);
-            }catch(QueryException $exception){
-                return response()->json(['error' => 'Erro na conexão com o banco de dados'], Response::HTTP_INTERNAL_SERVER_ERROR);
-            }
-        }
+        return $this->carService->update($id, $request);
     }
 
     public function destroy($id){
-        try{
-            $car = $this->model->find($id)->delete();
-            return response()->json(null, Response::HTTP_OK);
-        }catch(QueryException $exception){
-            return response()->json(['error' => 'Erro na conexão com o banco de dados'], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return $this->carService->destroy($id);
     }
 }
