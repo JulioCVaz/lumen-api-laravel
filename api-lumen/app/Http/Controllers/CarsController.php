@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Cars;
 use Symfony\Component\HttpFoundation\Response;
+use App\Models\ValidationCar;
 
 class CarsController extends Controller
 {
@@ -46,12 +47,7 @@ class CarsController extends Controller
     public function store(Request $request){
         $validator = Validator::make(
             $request->all(),
-            [
-                'name' => 'required | max:80',
-                'description' => 'required',
-                'model' => 'required | max:10 | min:2',
-                'date' =>  'required | date_format: "Y-m-d"'
-            ]
+            ValidationCar::RULE_CAR
         );
         if($validator->fails()){
             return response()->json($validator->errors(), Response::HTTP_BAD_REQUEST);
@@ -68,12 +64,7 @@ class CarsController extends Controller
     public function update($id, Request $request){
         $validator = Validator::make(
             $request->all(),
-            [
-                'name' => 'required | max:80',
-                'description' => 'required',
-                'model' => 'required | max:10 | min:2',
-                'date' =>  'required | date_format: "Y-m-d"'
-            ]
+            ValidationCar::RULE_CAR
         );
         if($validator->fails()){
             return response()->json($validator->errors(), Response::HTTP_BAD_REQUEST);
